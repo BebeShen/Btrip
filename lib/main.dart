@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+
 import 'screens/home_screen.dart';
 import 'screens/daily_plan_screen.dart';
 import 'screens/record_screen.dart';
@@ -51,56 +53,25 @@ class _MainScaffoldState extends State<MainScaffold> {
     }
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  Color _getIconColor(int index) {
-    return _selectedIndex == index ? Colors.blue : Colors.grey;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _getBody(),
-      floatingActionButton: Container(
-        height: 56,  // 調整圓形按鈕尺寸
-        width: 56,
-        child: FloatingActionButton(
-          onPressed: () => _onItemTapped(2),
-          backgroundColor: _selectedIndex == 2 ? Colors.blue : Colors.grey,
-          shape: const CircleBorder(),
-          child: const Icon(Icons.home),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 0, // 調整 notch，讓 FAB 不會凸太高
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              icon: Icon(Icons.calendar_today_outlined, color: _getIconColor(0)),
-              onPressed: () => _onItemTapped(0),
-            ),
-            IconButton(
-              icon: Icon(Icons.photo_camera_outlined, color: _getIconColor(1)),
-              onPressed: () => _onItemTapped(1),
-            ),
-            const SizedBox(width: 40),
-            IconButton(
-              icon: Icon(Icons.map_outlined, color: _getIconColor(3)),
-              onPressed: () => _onItemTapped(3),
-            ),
-            IconButton(
-              icon: Icon(Icons.subway_outlined, color: _getIconColor(4)),
-              onPressed: () => _onItemTapped(4),
-            ),
-          ],
-        ),
+      bottomNavigationBar: ConvexAppBar(
+        style: TabStyle.reactCircle, // 中間凸起效果
+        items: const [
+          TabItem(icon: Icons.calendar_today_outlined, title: '行程'),
+          TabItem(icon: Icons.photo_camera_outlined, title: '紀錄'),
+          TabItem(icon: Icons.home, title: '首頁'),
+          TabItem(icon: Icons.map_outlined, title: '地圖'),
+          TabItem(icon: Icons.subway_outlined, title: '地鐵'),
+        ],
+        initialActiveIndex: _selectedIndex,
+        onTap: (int i) {
+          setState(() {
+            _selectedIndex = i;
+          });
+        },
       ),
     );
   }
