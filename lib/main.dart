@@ -1,44 +1,55 @@
 import 'package:flutter/material.dart';
-import 'screens/map_screen.dart';
+import 'screens/home_screen.dart';
 import 'screens/daily_plan_screen.dart';
 import 'screens/record_screen.dart';
+import 'screens/map_screen.dart';
 import 'screens/subway_screen.dart';
 
 void main() {
-  runApp(const BusanTripApp());
+  runApp(const MyApp());
 }
 
-class BusanTripApp extends StatelessWidget {
-  const BusanTripApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Busan Trip',
+      title: '釜山行 App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MainPage(),
+      home: const MainScaffold(),
     );
   }
 }
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+class MainScaffold extends StatefulWidget {
+  const MainScaffold({super.key});
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<MainScaffold> createState() => _MainScaffoldState();
 }
 
-class _MainPageState extends State<MainPage> {
-  int _selectedIndex = 0;
+class _MainScaffoldState extends State<MainScaffold> {
+  int _selectedIndex = 2;
 
-  final List<Widget> _pages = [
-    const MapScreen(),
-    const DailyPlanScreen(),
-    const RecordScreen(),
-    const SubwayScreen(),
-  ];
+  Widget _getBody() {
+    switch (_selectedIndex) {
+      case 0:
+        return const DailyPlanScreen();
+      case 1:
+        return const RecordScreen();
+      case 2:
+        return const HomeScreen();
+      case 3:
+        return const MapScreen();
+      case 4:
+        return const SubwayScreen();
+      default:
+        return const HomeScreen();
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -46,19 +57,50 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  Color _getIconColor(int index) {
+    return _selectedIndex == index ? Colors.blue : Colors.grey;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.map), label: '地圖'),
-          BottomNavigationBarItem(icon: Icon(Icons.today), label: '行程'),
-          BottomNavigationBarItem(icon: Icon(Icons.photo), label: '紀錄'),
-          BottomNavigationBarItem(icon: Icon(Icons.subway), label: '地鐵'),
-        ],
+      body: _getBody(),
+      floatingActionButton: Container(
+        height: 56,  // 調整圓形按鈕尺寸
+        width: 56,
+        child: FloatingActionButton(
+          onPressed: () => _onItemTapped(2),
+          backgroundColor: _selectedIndex == 2 ? Colors.blue : Colors.grey,
+          shape: const CircleBorder(),
+          child: const Icon(Icons.home),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 0, // 調整 notch，讓 FAB 不會凸太高
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              icon: Icon(Icons.calendar_today_outlined, color: _getIconColor(0)),
+              onPressed: () => _onItemTapped(0),
+            ),
+            IconButton(
+              icon: Icon(Icons.photo_camera_outlined, color: _getIconColor(1)),
+              onPressed: () => _onItemTapped(1),
+            ),
+            const SizedBox(width: 40),
+            IconButton(
+              icon: Icon(Icons.map_outlined, color: _getIconColor(3)),
+              onPressed: () => _onItemTapped(3),
+            ),
+            IconButton(
+              icon: Icon(Icons.subway_outlined, color: _getIconColor(4)),
+              onPressed: () => _onItemTapped(4),
+            ),
+          ],
+        ),
       ),
     );
   }
